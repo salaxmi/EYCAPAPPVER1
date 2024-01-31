@@ -1,6 +1,16 @@
 using  {eylakshmi.db.master,eylakshmi.db.transaction} from '../db/datamodel';
-service CatalogService @(path: 'CatalogService'){
-    entity  EmployeeSet as projection on master.employees;
+service CatalogService @(path: 'CatalogService',requires:'authenticated-user'){
+     entity EmployeeSet @(restrict: [
+        {
+            grant: ['READ'],
+            to   : 'Viewer',
+            where: 'bankName = $user.BankName'
+        },
+        {
+            grant: ['WRITE'],
+            to   : 'Admin'
+        }
+    ])    as projection on master.employees;
     entity  BusinessPartnerSet as projection on master.businesspartner;
     entity  ProductSet as projection on master.product;
     entity  BPAddresSet as projection on master.address;
